@@ -1,12 +1,15 @@
 
-import 'dart:ui';
 
-class WeatherState{
-  final Color textColor;
-  final Color bgColor;
-  final String weatherText;
-  final String temperatureText;
-  final String city;
+import 'package:flutter/widgets.dart';
 
-  WeatherState(this.textColor, this.bgColor, this.weatherText, this.temperatureText, this.city);
+class UiState{
+
+  Widget getUi(dynamic data, Function func) {
+    return null;
+  }
+
+  int getState(){
+    return -1;
+  }
+
 }
