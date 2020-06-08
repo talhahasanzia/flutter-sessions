@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:todoapp/database_helper.dart';
+import 'package:todoapp/todo_model.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -10,11 +12,26 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<String> _todoList = List<String>();
+  List<Todo> _todoList = List<Todo>();
+  DatabaseHelper _databaseHelper = DatabaseHelper.instance;
 
-  void addTodoItem(String todo) {
-    setState(() {
-      _todoList.add(todo);
+  @override
+  void initState() {
+    super.initState();
+    _databaseHelper.queryAllRows().then((todoList) {
+      if (todoList != null && todoList.isNotEmpty) {
+        fetchData();
+      }
+    });
+  }
+
+  void addTodoItem(String title, String description) {
+    _databaseHelper
+        .insert(Todo(_todoList.length + 1, title, description))
+        .then((id) {
+      if (id != -1) {
+        fetchData();
+      }
     });
   }
 
@@ -22,6 +39,12 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     Scaffold scaffold = getScaffold();
     return scaffold;
+  }
+
+  @override
+  void dispose() {
+    _databaseHelper.closeDatabase();
+    super.dispose();
   }
 
   Scaffold getScaffold() {
@@ -44,6 +67,14 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void fetchData() {
+    _databaseHelper.queryAllRows().then((todoList) {
+      setState(() {
+        _todoList = todoList;
+      });
+    });
+  }
+
   List<Widget> getItems() {
     List<Widget> listTiles = new List();
 
@@ -54,20 +85,19 @@ class _MyHomePageState extends State<MyHomePage> {
 
           // Each Dismissible must contain a Key. Keys allow Flutter to
           // uniquely identify widgets.
-          key: Key(element),
+          key: Key(element.toString()),
           // Provide a function that tells the app
           // what to do after an item has been swiped away.
           onDismissed: (direction) {
             // Remove the item from the data source.
-            setState(() {
-              _todoList.remove(element);
+            _databaseHelper.delete(element.id).then((id) {
+              fetchData();
             });
-
-            // Show a snackbar. This snackbar could also contain "Undo" actions.
-            Scaffold.of(context)
-                .showSnackBar(SnackBar(content: Text("$element dismissed")));
           },
-          child: ListTile(title: Text('$element')),
+          child: ListTile(
+            title: Text(element.title),
+            subtitle: Text(element.description),
+          ),
         ),
       );
     });
@@ -77,7 +107,8 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class MyFloatingActionButton extends StatelessWidget {
-  final Function(String) _onAdded;
+  final Function(String, String) _onAdded;
+  String _cTitle = "";
 
   MyFloatingActionButton(this._onAdded) : super();
 
@@ -96,6 +127,7 @@ class MyFloatingActionButton extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   TextField(
+                    decoration: InputDecoration(hintText: "Title"),
                     expands: false,
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -105,7 +137,24 @@ class MyFloatingActionButton extends StatelessWidget {
                     cursorColor: Colors.white,
                     textInputAction: TextInputAction.done,
                     onSubmitted: (text) {
-                      _onAdded(text);
+                      _cTitle = text;
+                    },
+                    onChanged: (text) {
+                      _cTitle = text;
+                    },
+                  ),
+                  TextField(
+                    decoration: InputDecoration(hintText: "Description"),
+                    expands: false,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 42,
+                    ),
+                    cursorColor: Colors.white,
+                    textInputAction: TextInputAction.done,
+                    onSubmitted: (text) {
+                      _onAdded(_cTitle, text);
                       Navigator.of(context).pop();
                     },
                   ),
