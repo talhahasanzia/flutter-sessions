@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:weatherapp/weather_model.dart';
+import 'package:unittestingdart/weather_model.dart';
 
 Future<WeatherModel> fetchWeather(City city, {http.Client client}) async {
   final response = await client.get(

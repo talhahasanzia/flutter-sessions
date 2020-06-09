@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:weatherapp/ui_state.dart';
-import 'package:weatherapp/weather_model.dart';
-import 'package:weatherapp/weather_service.dart';
-import 'package:weatherapp/weather_state.dart';
+import 'package:unittestingdart/ui_state.dart';
+import 'package:unittestingdart/weather_model.dart';
+import 'package:unittestingdart/weather_service.dart';
+import 'package:unittestingdart/weather_state.dart';
 
 
 import 'weather_colors.dart';

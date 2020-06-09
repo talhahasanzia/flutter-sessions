@@ -4,12 +4,11 @@
 // utility that Flutter provides. For example, you can send tap and scroll
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
-import 'package:flutter/widgets.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
-import 'package:weatherapp/weather_service.dart' as weather_service;
+import 'package:unittestingdart/weather_service.dart' as weather_service;
 
 import '../lib/weather_model.dart';
 import '../lib/weather_service.dart';
